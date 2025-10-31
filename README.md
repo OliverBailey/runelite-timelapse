@@ -1,6 +1,25 @@
 # RuneLite Timelapse Creator
 
-Create awesome timelapse videos from your RuneLite screenshots! This tool automatically finds all your OSRS screenshots, sorts them by timestamp, and compiles them into a video with optional music and chatbox blurring.
+Create awesome timelapse videos from your RuneLite screenshots! This tool automatically finds all your OSRS```bash
+SCREENSHOTS_DIR=/mnt/c/Users/YourUsername/.runelite/screenshots/MyIronman
+FRAMERATE=8
+OUTPUT_FPS=30
+OUTPUT_WIDTH=1920
+OUTPUT_HEIGHT=1080
+MUSIC_FILE=Sea_Shanty_2.mp3
+OUTPUT_VIDEO=my_osrs_journey.mp4
+VIDEO_ENCODER=auto
+VIDEO_QUALITY=23
+BLUR_ENABLED=true
+BLUR_X=15
+BLUR_Y=320
+BLUR_WIDTH=310
+BLUR_HEIGHT=70
+BLUR_AMOUNT=15
+HOLD_LAST_FRAME=true
+```
+
+This will create a 1080p video where screenshots advance at 8 per second with smooth 30fps playback, Sea Shanty 2 playing in the background, and the chatbox blurred out. GPU encoding will be used automatically if available.s them by timestamp, and compiles them into a video with optional music and chatbox blurring.
 
 ## Features
 
@@ -74,6 +93,11 @@ Open the `.env` file and configure the following settings:
   - Higher = smoother video playback
   - Recommended: 25-60
   - This is independent of FRAMERATE - you can have slow-paced screenshots (5 fps) with smooth playback (30 fps)
+
+- **OUTPUT_WIDTH** / **OUTPUT_HEIGHT**: Output video resolution (default: 1920x1080)
+  - All screenshots will be scaled to this resolution
+  - Maintains aspect ratio with black padding if needed
+  - Common options: 1920x1080 (Full HD), 2560x1440 (2K), 3840x2160 (4K)
   
 - **MUSIC_FILE**: Audio file to add as background music
   - Place the audio file in the same directory as the script
@@ -100,10 +124,10 @@ Open the `.env` file and configure the following settings:
 To protect your privacy by blurring the chatbox:
 
 - **BLUR_ENABLED**: Set to `true` to enable chatbox blurring (default: true)
-- **BLUR_X**: X position of blur box (default: 7)
-- **BLUR_Y**: Y position of blur box (default: 740)
-- **BLUR_WIDTH**: Width of blur box (default: 512)
-- **BLUR_HEIGHT**: Height of blur box (default: 110)
+- **BLUR_X**, **BLUR_Y**, **BLUR_WIDTH**, **BLUR_HEIGHT**: Position and size of blur box
+  - Coordinates are based on RuneLite fixed mode (765x503) 
+  - **Automatically scaled** to match your OUTPUT_WIDTH and OUTPUT_HEIGHT
+  - Default values work for standard chatbox position
 - **BLUR_AMOUNT**: Blur intensity (default: 15)
 
 ### Advanced Settings
@@ -131,7 +155,7 @@ The script will:
 Here's a sample `.env` configuration:
 
 ```bash
-SCREENSHOTS_DIR=/mnt/c/Users/Freyjas/.runelite/screenshots/MyIronman
+SCREENSHOTS_DIR=/mnt/c/Users/YourUsername/.runelite/screenshots/MyIronman
 FRAMERATE=8
 OUTPUT_FPS=30
 MUSIC_FILE=Sea_Shanty_2.mp3

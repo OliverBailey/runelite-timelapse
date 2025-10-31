@@ -20,6 +20,8 @@ if not os.path.exists(screenshots_dir):
 # Video settings
 framerate = int(os.getenv('FRAMERATE', '5'))
 output_fps = int(os.getenv('OUTPUT_FPS', '30'))
+output_width = int(os.getenv('OUTPUT_WIDTH', '1920'))
+output_height = int(os.getenv('OUTPUT_HEIGHT', '1080'))
 output_video = os.getenv('OUTPUT_VIDEO', 'account_timelapse.mp4')
 video_quality = os.getenv('VIDEO_QUALITY', '23')
 
@@ -35,13 +37,30 @@ elif not os.path.exists(music_file):
 hold_last_frame = os.getenv('HOLD_LAST_FRAME', 'true').lower() == 'true'
 
 # Chatbox blur settings
+# NOTE: Blur coordinates are based on a reference resolution of 765x503 (RuneLite fixed mode)
+# They will be automatically scaled to match OUTPUT_WIDTH and OUTPUT_HEIGHT
 blur_enabled = os.getenv('BLUR_ENABLED', 'true').lower() == 'true'
 if blur_enabled:
+    # Reference resolution that blur coordinates are designed for
+    BLUR_REFERENCE_WIDTH = 765
+    BLUR_REFERENCE_HEIGHT = 503
+    
+    # Scale factor based on output resolution
+    scale_x = output_width / BLUR_REFERENCE_WIDTH
+    scale_y = output_height / BLUR_REFERENCE_HEIGHT
+    
+    # Get blur coordinates from env (these are for 765x503 reference)
+    blur_x_ref = int(os.getenv('BLUR_X', '7'))
+    blur_y_ref = int(os.getenv('BLUR_Y', '345'))  # Adjusted for 765x503
+    blur_w_ref = int(os.getenv('BLUR_WIDTH', '512'))
+    blur_h_ref = int(os.getenv('BLUR_HEIGHT', '75'))  # Adjusted for 765x503
+    
+    # Scale coordinates to output resolution
     blur_box = {
-        'x': int(os.getenv('BLUR_X', '7')),
-        'y': int(os.getenv('BLUR_Y', '740')),
-        'w': int(os.getenv('BLUR_WIDTH', '512')),
-        'h': int(os.getenv('BLUR_HEIGHT', '110'))
+        'x': int(blur_x_ref * scale_x),
+        'y': int(blur_y_ref * scale_y),
+        'w': int(blur_w_ref * scale_x),
+        'h': int(blur_h_ref * scale_y)
     }
     blur_amount = int(os.getenv('BLUR_AMOUNT', '15'))
 else:
@@ -198,8 +217,14 @@ def create_timelapse():
     filter_chain = []
     video_stream_in = "[0:v]"
     
+    # Scale all images to the target output resolution
+    # This prevents issues with mixed screenshot sizes
+    # Images are scaled to fit within bounds while maintaining aspect ratio, then padded
+    filter_chain.append(f"{video_stream_in}scale={output_width}:{output_height}:force_original_aspect_ratio=decrease,pad={output_width}:{output_height}:(ow-iw)/2:(oh-ih)/2[v_scaled]")
+    video_stream_in = "[v_scaled]"
+    
     if blur_box:
-        print(f"Applying blur to box: {blur_box}")
+        print(f"Applying blur to chatbox at position ({blur_box['x']}, {blur_box['y']}) with size {blur_box['w']}x{blur_box['h']}")
         b = blur_box
         filter_chain.append(
             f"{video_stream_in}split[main][to_blur]; "
