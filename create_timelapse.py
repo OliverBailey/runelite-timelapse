@@ -218,9 +218,9 @@ def create_timelapse():
     video_stream_in = "[0:v]"
     
     # Scale all images to the target output resolution
-    # This prevents issues with mixed screenshot sizes
-    # Images are scaled to fit within bounds while maintaining aspect ratio, then padded
-    filter_chain.append(f"{video_stream_in}scale={output_width}:{output_height}:force_original_aspect_ratio=decrease,pad={output_width}:{output_height}:(ow-iw)/2:(oh-ih)/2[v_scaled]")
+    # Use 'increase' to fill the frame (will crop if aspect ratio doesn't match)
+    # This ensures blur coordinates are always in the correct position
+    filter_chain.append(f"{video_stream_in}scale={output_width}:{output_height}:force_original_aspect_ratio=increase,crop={output_width}:{output_height}[v_scaled]")
     video_stream_in = "[v_scaled]"
     
     if blur_box:
