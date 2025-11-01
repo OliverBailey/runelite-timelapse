@@ -1,27 +1,6 @@
 # RuneLite Timelapse Creator
 
-Create awesome timelapse videos from your RuneLite screenshots! This tool automatically finds all your OSRS```bash
-SCREENSHOTS_DIR=/mnt/c/Users/YourUsername/.runelite/screenshots/MyIronman
-FRAMERATE=8
-OUTPUT_FPS=30
-OUTPUT_WIDTH=1920
-OUTPUT_HEIGHT=1080
-MUSIC_FILE=Sea_Shanty_2.mp3
-OUTPUT_VIDEO=my_osrs_journey.mp4
-VIDEO_ENCODER=auto
-VIDEO_QUALITY=23
-   ```env
-   BLUR_ENABLED=true
-   BLUR_X=0
-   BLUR_Y=325
-   BLUR_WIDTH=315
-   BLUR_HEIGHT=70
-   BLUR_AMOUNT=15
-   ```
-HOLD_LAST_FRAME=true
-```
-
-This will create a 1080p video where screenshots advance at 8 per second with smooth 30fps playback, Sea Shanty 2 playing in the background, and the chatbox blurred out. GPU encoding will be used automatically if available.s them by timestamp, and compiles them into a video with optional music and chatbox blurring.
+Create awesome timelapse videos from your RuneLite screenshots! This tool automatically finds all your OSRS screenshots, sorts them by timestamp, and compiles them into a video with optional music and chatbox blurring.
 
 ## Features
 
@@ -160,15 +139,17 @@ Here's a sample `.env` configuration:
 SCREENSHOTS_DIR=/mnt/c/Users/YourUsername/.runelite/screenshots/MyIronman
 FRAMERATE=8
 OUTPUT_FPS=30
+OUTPUT_WIDTH=1920
+OUTPUT_HEIGHT=1080
 MUSIC_FILE=Sea_Shanty_2.mp3
 OUTPUT_VIDEO=my_osrs_journey.mp4
 VIDEO_ENCODER=auto
 VIDEO_QUALITY=23
 BLUR_ENABLED=true
-BLUR_X=7
-BLUR_Y=740
-BLUR_WIDTH=512
-BLUR_HEIGHT=110
+BLUR_X=0
+BLUR_Y=325
+BLUR_WIDTH=315
+BLUR_HEIGHT=70
 BLUR_AMOUNT=15
 HOLD_LAST_FRAME=true
 ```
