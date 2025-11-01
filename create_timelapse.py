@@ -234,13 +234,16 @@ def create_timelapse():
         )
         video_stream_in = "[v_blurred]"
     
-    # Define the output name for the crop filter
-    crop_output = "[v_out]" if padding_duration == 0 else "[v_cropped]"
-    filter_chain.append(f"{video_stream_in}crop=floor(iw/2)*2:floor(ih/2)*2,fps={output_fps}{crop_output}")
-
-    # Add padding filter if needed
+    # Define the output name for the next filter step
+    next_output = "[v_out]" if padding_duration == 0 else "[v_padded]"
+    
+    # Add padding filter if needed (before fps to ensure last frame is cloned properly)
     if padding_duration > 0:
-        filter_chain.append(f"[v_cropped]tpad=stop_mode=clone:stop_duration={padding_duration}[v_out]")
+        filter_chain.append(f"{video_stream_in}tpad=stop_mode=clone:stop_duration={padding_duration}[v_padded]")
+        video_stream_in = "[v_padded]"
+    
+    # Apply fps filter and crop to even dimensions last
+    filter_chain.append(f"{video_stream_in}fps={output_fps},crop=floor(iw/2)*2:floor(ih/2)*2[v_out]")
 
     ffmpeg_command.extend(['-filter_complex', ";".join(filter_chain)])
 
